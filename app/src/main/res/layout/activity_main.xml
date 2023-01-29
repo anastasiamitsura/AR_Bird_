@@ -6,62 +6,21 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/navV"
         android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:orientation="vertical"
-        android:layout_gravity="bottom">
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        app:menu="@menu/menu_toolbar"/>
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@color/black" />
+    <fragment
+        android:id="@+id/nav_host_fragment_activity_main"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:layout_constraintBottom_toTopOf="@id/navV"
+        app:navGraph="@navigation/navigation_app" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_weight="1">
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:background="@color/blue_main"
-                app:srcCompat="@drawable/camera_24"
-                tools:srcCompat="@drawable/camera_24" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_weight="0.03"
-                android:background="@color/black" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:background="@color/dark_main"
-                app:srcCompat="@drawable/ic_baseline_list_alt_24"
-                tools:srcCompat="@drawable/ic_baseline_list_alt_24" />
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_weight="0.03"
-                android:background="@color/black" />
-
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_weight="1"
-                android:background="@color/dark_main"
-                app:srcCompat="@drawable/ic_baseline_person_24"
-                tools:srcCompat="@drawable/ic_baseline_person_24" />
-
-        </LinearLayout>
-
-
-
-    </LinearLayout>
 
 </FrameLayout>
