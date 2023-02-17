@@ -5,10 +5,16 @@
     android:layout_height="match_parent"
     tools:context=".CameraFr">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <SurfaceView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="match_parent"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Сканировать"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="50dp"/>
+
+
 
 </FrameLayout>

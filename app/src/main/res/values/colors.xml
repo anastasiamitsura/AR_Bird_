@@ -9,5 +9,12 @@
     <color name="white">#FFFFFFFF</color>
     <color name="blue_main">#50f4f3</color>
     <color name="dark_main">#B1BAC4</color>
-    <color name="add_color">#50f4f3</color>
+    <color name="add_color">#A6DDDF</color>
+    <color name="primarul">#21DFE6</color>
+    <color name="colorPrimary">#21DFE6</color>
+    <color name="colorPrimaryVariant">#0EBEC5</color>
+    <color name="colorOnPrimary">@color/white</color>
+    <!-- Secondary brand color. -->
+    <color name="colorSecondary">#2ADA03</color>
+    <color name="colorSecondaryVariant">#0A8701</color>
 </resources>
