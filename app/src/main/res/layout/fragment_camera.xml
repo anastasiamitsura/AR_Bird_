@@ -5,10 +5,19 @@
     android:layout_height="match_parent"
     tools:context=".CameraFr">
 
-    <SurfaceView
+    <!--<SurfaceView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"/>-->
+
+    <TextView
+        android:id="@+id/countClick"
+        android:text="0"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/TextAppearance.AppCompat.Title"
+        android:layout_gravity="center"/>
     <Button
+        android:id="@+id/skan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Сканировать"

@@ -2,6 +2,8 @@ package com.example.arbird;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -17,20 +19,21 @@ import com.google.android.gms.location.Priority;
 public class CameraFr extends Fragment  {
 
     private FragmentCameraBinding binding;
+    int a = 0;
 
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState
+    ) {
+        binding = FragmentCameraBinding.inflate(inflater, container, false);
+        binding.skan.setOnClickListener(view -> {
+            a++;
+            binding.countClick.setText(a + "");
+        });
+        return binding.getRoot();
 
-        binding = FragmentCameraBinding.inflate(getLayoutInflater());
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_camera, container, false);
     }
 
 }

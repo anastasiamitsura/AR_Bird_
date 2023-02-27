@@ -8,10 +8,14 @@
     android:orientation="vertical">
 
     <FrameLayout
-        android:id="@+id/container"
+        android:id="@+id/containerrrr"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        app:defaultNavHost="true"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        app:layout_constraintBottom_toTopOf="@id/navV"
+        app:navGraph="@navigation/navigation_app"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navV"

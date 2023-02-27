@@ -1,15 +1,19 @@
 package com.example.arbird;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 
 import com.example.arbird.databinding.ActivityMainBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -22,14 +26,30 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.camerabt, R.id.historybt, R.id.profilebt)
-                .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(binding.navV, navController);
-
-
+        binding.navV.setOnItemSelectedListener(itemSelectListener);
+        getSupportFragmentManager().beginTransaction().replace(R.id.containerrrr, new CameraFr()).commit();
         int a = 0;
     }
+
+    private NavigationBarView.OnItemSelectedListener itemSelectListener = new NavigationBarView.OnItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+            Fragment selectedFragment=null;
+            switch (item.getItemId()){
+                case R.id.camerabt:
+                    selectedFragment = new CameraFr();
+                    break;
+                case R.id.historybt:
+                    selectedFragment = new HistoryFr();
+                    break;
+                case R.id.profilebt:
+                    selectedFragment = new ProfileFr();
+                    break;
+            }
+            getSupportFragmentManager().beginTransaction().replace(R.id.containerrrr, selectedFragment).commit();
+            return true;
+        }
+    };
+
 }
