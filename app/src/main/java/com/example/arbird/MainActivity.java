@@ -1,18 +1,14 @@
 package com.example.arbird;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import com.example.arbird.databinding.ActivityMainBinding;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationBarView;
 
 public class MainActivity extends AppCompatActivity {
@@ -44,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new HistoryFr();
                     break;
                 case R.id.profilebt:
-                    selectedFragment = new ProfileFr();
+                    selectedFragment = new GPSFragment();
                     break;
             }
             getSupportFragmentManager().beginTransaction().replace(R.id.containerrrr, selectedFragment).commit();

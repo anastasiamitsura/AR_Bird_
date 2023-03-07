@@ -1,5 +1,6 @@
 package com.example.arbird;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -29,8 +30,7 @@ public class CameraFr extends Fragment  {
     ) {
         binding = FragmentCameraBinding.inflate(inflater, container, false);
         binding.skan.setOnClickListener(view -> {
-            a++;
-            binding.countClick.setText(a + "");
+
         });
         return binding.getRoot();
 
