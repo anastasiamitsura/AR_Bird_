@@ -15,9 +15,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ARBird" >
         <activity
-            android:name=".Gps"
-            android:exported="false" />
-        <activity
             android:name=".MainActivity"
             android:exported="true" >
             <intent-filter>

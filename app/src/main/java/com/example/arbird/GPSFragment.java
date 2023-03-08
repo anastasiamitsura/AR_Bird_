@@ -26,10 +26,14 @@ import java.util.Date;
 
 public class GPSFragment extends Fragment {
 
+    //это я для себя пишу
+    /**
+     * LocationManager – (класс) обеспечивает доступ к системной службе определения местоположения Android;
+     * LocationListener — (интерфейс) регламентирует обработку приложение событий службы определения местоположения Android;
+     * Location – (класс) представляет географические координаты полученные от навигационной системы.*/
+
     private LocationManager locationManager;
     StringBuilder sbGPS = new StringBuilder();
-    StringBuilder sbNet = new StringBuilder();
-
     private FragmentGPSBinding binding;
 
     @Nullable
@@ -38,53 +42,52 @@ public class GPSFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState
     ) {
+        //обращение к сервису определения локации
         locationManager = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
         binding = FragmentGPSBinding.inflate(inflater, container, false);
+        //переход в настройки разрешений приложений к gps
         binding.btnLocationSettings.setOnClickListener(view -> {
             startActivity(new Intent(
                     android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
         });
         return binding.getRoot();
     }
+    //обновление данных о позиции
     @Override
     public void onResume() {
         super.onResume();
         if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+            //я не знаю зачем это надо, но видимо для какого то разрешения это жизнено необходимо
             return;
         }
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                 1000 * 10, 10, locationListener);
-        locationManager.requestLocationUpdates(
-                LocationManager.NETWORK_PROVIDER, 1000 * 10, 10,
-                locationListener);
         checkEnabled();
     }
 
+    //остановка считывания геопозиции
     @Override
     public void onPause() {
         super.onPause();
         locationManager.removeUpdates(locationListener);
     }
 
+    //я так понимаю это обработка всего связаного с изменение или считывание позиции
     private LocationListener locationListener = new LocationListener() {
 
+        //если локация изменилась и тп
         @Override
         public void onLocationChanged(Location location) {
             showLocation(location);
         }
 
+        //проверка доступа к провайдеру
         @Override
         public void onProviderDisabled(String provider) {
             checkEnabled();
         }
 
+        //забить на наличие разрешений
         @SuppressLint("MissingPermission")
         @Override
         public void onProviderEnabled(String provider) {
@@ -92,43 +95,39 @@ public class GPSFragment extends Fragment {
             showLocation(locationManager.getLastKnownLocation(provider));
         }
 
+        //проврека работоспоcобности провайдера
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
             if (provider.equals(LocationManager.GPS_PROVIDER)) {
                 binding.tvStatusGPS.setText("Status: " + String.valueOf(status));
-            } else if (provider.equals(LocationManager.NETWORK_PROVIDER)) {
-                binding.tvStatusNet.setText("Status: " + String.valueOf(status));
             }
         }
     };
 
+    //вывод местоположения
     private void showLocation(Location location) {
         if (location == null)
             return;
         if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
             binding.tvLocationGPS.setText(formatLocation(location));
-        } else if (location.getProvider().equals(
-                LocationManager.NETWORK_PROVIDER)) {
-            binding.tvLocationNet.setText(formatLocation(location));
         }
     }
 
+    //форматирование местоположеня и времяни
     private String formatLocation(Location location) {
         if (location == null)
             return "";
         return String.format(
-                "Coordinates: lat = %1$.4f, lon = %2$.4f, time = %3$tF %3$tT",
+                "Coordinates: lat = %1$.14f, lon = %2$.14f, time = %3$tF %3$tT",
                 location.getLatitude(), location.getLongitude(), new Date(
                         location.getTime()));
     }
 
+    //вывод проверки рабоспособности провайдера
     private void checkEnabled() {
         binding.tvEnabledGPS.setText("Enabled: "
                 + locationManager
                 .isProviderEnabled(LocationManager.GPS_PROVIDER));
-        binding.tvEnabledNet.setText("Enabled: "
-                + locationManager
-                .isProviderEnabled(LocationManager.NETWORK_PROVIDER));
     }
 
 
