@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
                     selectedFragment = new CameraFr();
                     break;
                 case R.id.historybt:
-                    selectedFragment = new HistoryFr();
+                    selectedFragment = new KompasFragment();
                     break;
                 case R.id.profilebt:
                     selectedFragment = new GPSFragment();
