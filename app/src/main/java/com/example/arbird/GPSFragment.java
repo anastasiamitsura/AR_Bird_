@@ -35,6 +35,7 @@ public class GPSFragment extends Fragment {
     private LocationManager locationManager;
     StringBuilder sbGPS = new StringBuilder();
     private FragmentGPSBinding binding;
+    public static Location locationNow;
 
     @Nullable
     @Override
@@ -78,7 +79,7 @@ public class GPSFragment extends Fragment {
         //если локация изменилась и тп
         @Override
         public void onLocationChanged(Location location) {
-            showLocation(location);
+            locationNow = location;
         }
 
         //проверка доступа к провайдеру
@@ -92,7 +93,7 @@ public class GPSFragment extends Fragment {
         @Override
         public void onProviderEnabled(String provider) {
             checkEnabled();
-            showLocation(locationManager.getLastKnownLocation(provider));
+            locationNow =  locationManager.getLastKnownLocation(provider);
         }
 
         //проврека работоспоcобности провайдера
@@ -118,7 +119,7 @@ public class GPSFragment extends Fragment {
         if (location == null)
             return "";
         return String.format(
-                "Coordinates: lat = %1$.14f, lon = %2$.14f, time = %3$tF %3$tT",
+                "Coordinates: lat = %1$.4f, lon = %2$.4f, time = %3$tF %3$tT",
                 location.getLatitude(), location.getLongitude(), new Date(
                         location.getTime()));
     }
