@@ -43,6 +43,11 @@ import java.util.Locale;
 public class CameraFr extends Fragment implements SensorEventListener{
 
     private FragmentCameraBinding binding;
+    private final PlaceAdapter adapter = new PlaceAdapter();
+    private final PlaceRepository repository = new PlaceRepository();
+
+
+
     Geocoder geocoder;
     List<Address> addresses;
     private SensorManager sensorManager;
@@ -62,15 +67,23 @@ public class CameraFr extends Fragment implements SensorEventListener{
         locationManager = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
         geocoder = new Geocoder(requireContext(), Locale.getDefault());
         binding = FragmentCameraBinding.inflate(inflater, container, false);
-        binding.skan.setOnClickListener(view -> {
-            binding.tvLocationGPS.setText(formatLocation(locationNow));
-            binding.textC.setText("Отклонение от севера: " + Float.toString(degreeNow) + " градусов");
-            try {
-                getAdress();
-            } catch (IOException e) {
-                e.printStackTrace();
+        //binding.skan.setOnClickListener(view -> {
+         //   binding.tvLocationGPS.setText(formatLocation(locationNow));
+         //   binding.textC.setText("Отклонение от севера: " + Float.toString(degreeNow) + " градусов");
+           // try {
+           //     getAdress();
+         //   } catch (IOException e) {
+          //      e.printStackTrace();
+          //  }
+       // });
+        binding.skan.setOnClickListener(view -> goSearch());
+        binding.recycler.setAdapter(adapter);
+        repository.setOnLoadingPlaceState(state -> {
+            if(state instanceof OnLoadingPlaceState.State.Success){
+                onUpdateData((OnLoadingPlaceState.State.Success)state);
             }
         });
+
         binding.btnLocationSettings.setOnClickListener(view -> {
             startActivity(new Intent(
                     android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
@@ -86,6 +99,25 @@ public class CameraFr extends Fragment implements SensorEventListener{
         return binding.getRoot();
 
     }
+
+    private void onUpdateData(OnLoadingPlaceState.State.Success state) {
+        adapter.setItems(state.getPlaces());
+    }
+
+    //TODO: нормальную хрень для нескольких запросов в одном репозиторие
+    private void goSearch() {
+        String point1 = String.format("%1$.6f", locationNow.getLongitude() + 0.0007) + "%2C" + String.format("%1$.6f", locationNow.getLatitude() + 0.0007);
+        String point2 = String.format("%1$.6f", locationNow.getLongitude() - 0.0007) + "%2C" + String.format("%1$.6f", locationNow.getLatitude() - 0.0007);;
+        String category = "кафе";
+        repository.search(point1, point2, category);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        repository.removeOnLoadingPlaceState();
+    }
+
     float [] mGravity;
     float [] mGeomagnetic;
     @Override
@@ -178,19 +210,10 @@ public class CameraFr extends Fragment implements SensorEventListener{
         if (location == null)
             return;
         if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
-            binding.tvLocationGPS.setText(formatLocation(location));
+       //     binding.tvLocationGPS.setText(formatLocation(location));
         }
     }
 
-    //форматирование местоположеня и времяни
-    private String formatLocation(Location location) {
-        if (location == null)
-            return "";
-        return String.format(
-                "Coordinates: lat = %1$.4f, lon = %2$.4f, time = %3$tF %3$tT",
-                location.getLatitude(), location.getLongitude(), new Date(
-                        location.getTime()));
-    }
 
     //вывод проверки рабоспособности провайдера
     private void checkEnabled() {
@@ -207,7 +230,7 @@ public class CameraFr extends Fragment implements SensorEventListener{
         String country = addresses.get(0).getCountryName();
         String postalCode = addresses.get(0).getPostalCode();
         String knownName = addresses.get(0).getFeatureName();
-        binding.textAdres.setText(address);
+     //   binding.textAdres.setText(address);
     }
 
 }
