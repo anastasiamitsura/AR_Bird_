@@ -15,24 +15,17 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.RotateAnimation;
-import android.widget.TextView;
-
 import com.example.arbird.databinding.FragmentCameraBinding;
-import com.example.arbird.databinding.FragmentGPSBinding;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.Priority;
 
 import java.io.IOException;
 import java.util.Date;
@@ -67,16 +60,10 @@ public class CameraFr extends Fragment implements SensorEventListener{
         locationManager = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
         geocoder = new Geocoder(requireContext(), Locale.getDefault());
         binding = FragmentCameraBinding.inflate(inflater, container, false);
-        //binding.skan.setOnClickListener(view -> {
-         //   binding.tvLocationGPS.setText(formatLocation(locationNow));
-         //   binding.textC.setText("Отклонение от севера: " + Float.toString(degreeNow) + " градусов");
-           // try {
-           //     getAdress();
-         //   } catch (IOException e) {
-          //      e.printStackTrace();
-          //  }
-       // });
-        binding.skan.setOnClickListener(view -> goSearch());
+        binding.skan.setOnClickListener(view -> {
+            goSearch();
+            binding.locaT.setText(formatLocation(locationNow));
+        });
         binding.recycler.setAdapter(adapter);
         repository.setOnLoadingPlaceState(state -> {
             if(state instanceof OnLoadingPlaceState.State.Success){
@@ -100,14 +87,24 @@ public class CameraFr extends Fragment implements SensorEventListener{
 
     }
 
+    private String formatLocation(Location location) {
+        if (location == null)
+            return "";
+        return String.format(
+                "Coordinates: lat = %1$.4f, lon = %2$.4f, time = %3$tF %3$tT",
+                location.getLatitude(), location.getLongitude(), new Date(
+                        location.getTime()));
+    }
+
+
     private void onUpdateData(OnLoadingPlaceState.State.Success state) {
         adapter.setItems(state.getPlaces());
     }
 
     //TODO: нормальную хрень для нескольких запросов в одном репозиторие
     private void goSearch() {
-        String point1 = String.format("%1$.6f", locationNow.getLongitude() + 0.0007) + "%2C" + String.format("%1$.6f", locationNow.getLatitude() + 0.0007);
-        String point2 = String.format("%1$.6f", locationNow.getLongitude() - 0.0007) + "%2C" + String.format("%1$.6f", locationNow.getLatitude() - 0.0007);;
+        String point1 = (locationNow.getLongitude() - 0.001) + "%2C" + (locationNow.getLatitude() + 0.001);
+        String point2 = (locationNow.getLongitude() + 0.001) + "%2C" + (locationNow.getLatitude() - 0.001);
         String category = "кафе";
         repository.search(point1, point2, category);
     }

@@ -1,8 +1,13 @@
 package com.example.arbird;
 
+import com.google.gson.annotations.SerializedName;
+
 public class PlaceShortData {
+    @SerializedName("name")
     private final String name;
+    @SerializedName("address_name")
     private final String address;
+    @SerializedName("address_comment")
     private final String etaj;
 
 

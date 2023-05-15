@@ -1,9 +1,12 @@
 package com.example.arbird;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class PlaceSearchResponce {
+    @SerializedName("items")
     private final List<PlaceShortData> search;
 
     public PlaceSearchResponce(){
