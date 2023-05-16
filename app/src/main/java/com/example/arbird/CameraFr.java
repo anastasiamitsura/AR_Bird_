@@ -103,9 +103,9 @@ public class CameraFr extends Fragment implements SensorEventListener{
 
     //TODO: нормальную хрень для нескольких запросов в одном репозиторие
     private void goSearch() {
-        String point1 = (locationNow.getLongitude() - 0.001) + "%2C" + (locationNow.getLatitude() + 0.001);
-        String point2 = (locationNow.getLongitude() + 0.001) + "%2C" + (locationNow.getLatitude() - 0.001);
-        String category = "кафе";
+        String point1 = (locationNow.getLongitude() - 0.1) + "%2C" + (locationNow.getLatitude() + 0.1);
+        String point2 = (locationNow.getLongitude() + 0.1) + "%2C" + (locationNow.getLatitude() - 0.1);
+        String category = "магазин";
         repository.search(point1, point2, category);
     }
 

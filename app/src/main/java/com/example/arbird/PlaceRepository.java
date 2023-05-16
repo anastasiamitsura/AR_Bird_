@@ -23,24 +23,28 @@ public class PlaceRepository {
     private List<PlaceShortData> shortPlaceList = new ArrayList<>();
     private OnLoadingPlaceState onLoadingPlaceState = null;
 
-    /*public void search(String point1, String point2, String category){
-        api.getSearchResult(category, point1, point2, "ruidzc1585").enqueue(new Callback<PlaceSearchResponce>() {
+    public void search(String point1, String point2, String category){
+        api.getSearchResult(category, point1, point2, "ruidzc1585").enqueue(new Callback<ResponseDoubleGis>() {
             @Override
-            public void onResponse(Call<PlaceSearchResponce> call, Response<PlaceSearchResponce> response) {
+            public void onResponse(Call<ResponseDoubleGis> call, Response<ResponseDoubleGis> response) {
                 if (onLoadingPlaceState != null && response.isSuccessful()){
-                    PlaceSearchResponce body = response.body();
+                    ResponseDoubleGis body = response.body();
                     if(body != null){
-                        onLoadingPlaceState.changeState(new OnLoadingPlaceState.State.Success(response.body().getSearch()));
+                        onLoadingPlaceState.changeState(
+                                new OnLoadingPlaceState.State.Success(
+                                        response.body().getResult().getItems()
+                                )
+                        );
                     }
                 }
             }
 
             @Override
-            public void onFailure(Call<PlaceSearchResponce> call, Throwable t) {
+            public void onFailure(Call<ResponseDoubleGis> call, Throwable t) {
 
             }
         });
-    }*/
+    }
 
     public void setOnLoadingPlaceState(OnLoadingPlaceState state){
         onLoadingPlaceState = state;
