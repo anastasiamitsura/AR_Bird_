@@ -1,5 +1,7 @@
 package com.example.arbird;
 
+import android.annotation.SuppressLint;
+import android.location.Location;
 import android.os.Debug;
 import android.util.Log;
 
@@ -23,7 +25,15 @@ public class PlaceRepository {
     private List<PlaceShortData> shortPlaceList = new ArrayList<>();
     private OnLoadingPlaceState onLoadingPlaceState = null;
 
-    public void search(String point1, String point2, String category){
+    public void search(double latityde, double longtyde, String category){
+        String point1 = String.format("%.4f,%.4f",
+                longtyde - 0.004,
+                latityde + 0.004
+        );
+        String point2 = String.format("%.4f,%.4f",
+                longtyde + 0.004,
+                latityde - 0.004
+        );
         api.getSearchResult(category, point1, point2, "ruidzc1585").enqueue(new Callback<ResponseDoubleGis>() {
             @Override
             public void onResponse(Call<ResponseDoubleGis> call, Response<ResponseDoubleGis> response) {
@@ -41,7 +51,7 @@ public class PlaceRepository {
 
             @Override
             public void onFailure(Call<ResponseDoubleGis> call, Throwable t) {
-
+                Log.e("ERORR", t.getMessage());
             }
         });
     }

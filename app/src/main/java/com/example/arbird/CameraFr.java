@@ -1,5 +1,6 @@
 package com.example.arbird;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -19,13 +20,21 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.arbird.databinding.FragmentCameraBinding;
+import com.example.arbird.databinding.FragmentKompasBinding;
 
 import java.io.IOException;
 import java.util.Date;
@@ -35,6 +44,9 @@ import java.util.Locale;
 
 public class CameraFr extends Fragment implements SensorEventListener{
 
+
+    private AdressRepository repository1;
+    private final AdresAdapter adapter1 = new AdresAdapter();
     private FragmentCameraBinding binding;
     private final PlaceAdapter adapter = new PlaceAdapter();
     private final PlaceRepository repository = new PlaceRepository();
@@ -50,6 +62,8 @@ public class CameraFr extends Fragment implements SensorEventListener{
     private final float kebaSharifLatitude = 21.4225f;
     private LocationManager locationManager;
     Location locationNow;
+    double latityde;
+    double longtyde;
     float degreeNow;
     private float RotateDegree = 0f;
 
@@ -60,8 +74,17 @@ public class CameraFr extends Fragment implements SensorEventListener{
         locationManager = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
         geocoder = new Geocoder(requireContext(), Locale.getDefault());
         binding = FragmentCameraBinding.inflate(inflater, container, false);
+        repository1 = new AdressRepository(requireContext());
+        int permissionStatus = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+
+        if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
         binding.skan.setOnClickListener(view -> {
-            goSearch();
+            checkNapraw(locationNow);
+            goSearch(latityde, longtyde);
             binding.locaT.setText(formatLocation(locationNow));
         });
         binding.recycler.setAdapter(adapter);
@@ -71,9 +94,18 @@ public class CameraFr extends Fragment implements SensorEventListener{
             }
         });
 
-        binding.btnLocationSettings.setOnClickListener(view -> {
-            startActivity(new Intent(
-                    android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));
+        binding.getadress.setOnClickListener(view -> {
+            if(locationNow != null){
+                try {
+                    getAdress();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            else{
+                Toast.makeText(getActivity(), "Ваше местоположение ещё не опрелено, подождите немного",
+                        Toast.LENGTH_LONG).show();
+            }
         });
         sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
         sensorManager.registerListener(this, sensorManager
@@ -86,6 +118,20 @@ public class CameraFr extends Fragment implements SensorEventListener{
         return binding.getRoot();
 
     }
+    private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
+            new ActivityResultContracts.RequestPermission(),
+            new ActivityResultCallback<Boolean>() {
+                @Override
+                public void onActivityResult(Boolean result) {
+                    if (result) {
+                        // PERMISSION GRANTED
+                    } else {
+                        Toast.makeText(getActivity(), "Без данных разрешений приложение не сможет работать",
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+    );
 
     private String formatLocation(Location location) {
         if (location == null)
@@ -101,12 +147,20 @@ public class CameraFr extends Fragment implements SensorEventListener{
         adapter.setItems(state.getPlaces());
     }
 
-    //TODO: нормальную хрень для нескольких запросов в одном репозиторие
-    private void goSearch() {
-        String point1 = (locationNow.getLongitude() - 0.1) + "%2C" + (locationNow.getLatitude() + 0.1);
-        String point2 = (locationNow.getLongitude() + 0.1) + "%2C" + (locationNow.getLatitude() - 0.1);
-        String category = "магазин";
-        repository.search(point1, point2, category);
+    //TODO: вроде так должно работать, но это не точно
+    private void goSearch(double latityde, double longtyde) {
+        if(latityde == 0 && longtyde == 0){
+            Toast.makeText(getActivity(), "Ваше местоположение ещё не опрелено, подождите немного",
+                    Toast.LENGTH_LONG).show();
+        }
+        else{
+            String[] categorys = {"красота", "магазин", "фитнес", "авто", "кафе", "ресторан", "аптека"};
+            for (int i = 0; i < categorys.length; i++) {
+                repository.search(latityde, longtyde, categorys[i]);
+            }
+
+        }
+
     }
 
     @Override
@@ -191,6 +245,7 @@ public class CameraFr extends Fragment implements SensorEventListener{
         public void onProviderEnabled(String provider) {
             checkEnabled();
             locationNow =  locationManager.getLastKnownLocation(provider);
+
         }
 
         //проврека работоспоcобности провайдера
@@ -214,20 +269,69 @@ public class CameraFr extends Fragment implements SensorEventListener{
 
     //вывод проверки рабоспособности провайдера
     private void checkEnabled() {
-        //binding.tvEnabledGPS.setText("Enabled: "
-        //        + locationManager
-        //        .isProviderEnabled(LocationManager.GPS_PROVIDER));
+    }
+
+    private  void checkNapraw(Location location){
+        latityde = location.getLatitude();
+        longtyde = location.getLongitude();
+        Log.e(latityde + "", longtyde + "");
+        if (degreeNow >= -22.5 && degreeNow <= 22.5){
+            latityde += 0.0004;
+        }
+        else if (degreeNow >= 22.5 && degreeNow <= 67.5){
+            latityde += 0.0004;
+            longtyde += 0.0004;
+        }
+        else if (degreeNow >= 67.5 && degreeNow <= 112.5){
+            longtyde += 0.0004;
+        }
+        else if (degreeNow >= 112.5 && degreeNow <= 157.5){
+            latityde -= 0.0004;
+            longtyde += 0.0004;
+        }
+        else if (degreeNow >= 157.5 && degreeNow <= -157.5){
+            latityde -= 0.0004;
+        }
+        else if (degreeNow >= -157.5 && degreeNow <= -112.5){
+            latityde -= 0.0004;
+            longtyde -= 0.0004;
+        }
+        else if (degreeNow >= -112.5 && degreeNow <= -67.5){
+            longtyde -= 0.0004;
+        }
+        else{
+            latityde += 0.0004;
+            longtyde -= 0.0004;
+        }
+        Log.e(latityde + "", longtyde + "");
     }
 
     private void getAdress() throws IOException {
-        addresses = geocoder.getFromLocation(locationNow.getLatitude(), locationNow.getLongitude(), 1);
+        checkNapraw(locationNow);
+        addresses = geocoder.getFromLocation(latityde, longtyde, 1);
         String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
+        int iend = address.indexOf(",");
+        String subString = "";
+        if (iend != -1)
+        {
+            subString = address.substring(0 , iend);
+        }
         String city = addresses.get(0).getLocality();
         String state = addresses.get(0).getAdminArea();
         String country = addresses.get(0).getCountryName();
         String postalCode = addresses.get(0).getPostalCode();
         String knownName = addresses.get(0).getFeatureName();
-     //   binding.textAdres.setText(address);
+        binding.AdresT.setText(address);
+        repository1.addAdress(
+                new AdresData(
+                        subString,
+                        "Город:" + city,
+                        "Страна:" + country,
+                        "Почтовый индес: " + postalCode,
+                        "Название: " + knownName
+                )
+        );
+        adapter1.setData(repository1.getAdresss());
     }
 
 }

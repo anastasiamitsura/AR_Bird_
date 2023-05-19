@@ -14,6 +14,7 @@ import com.google.android.material.navigation.NavigationBarView;
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
+    private AdressRepository repository;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,10 +23,14 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        repository = new AdressRepository(this);
+
+
         binding.navV.setOnItemSelectedListener(itemSelectListener);
         getSupportFragmentManager().beginTransaction().replace(R.id.containerrrr, new CameraFr()).commit();
         int a = 0;
     }
+
 
     private NavigationBarView.OnItemSelectedListener itemSelectListener = new NavigationBarView.OnItemSelectedListener() {
         @Override
@@ -48,4 +53,9 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        repository.close();
+    }
 }
