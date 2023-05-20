@@ -148,16 +148,13 @@ public class CameraFr extends Fragment implements SensorEventListener{
     }
 
     //TODO: вроде так должно работать, но это не точно
-    private void goSearch(double latityde, double longtyde) {
-        if(latityde == 0 && longtyde == 0){
+    private void goSearch(double latitude, double longitude) {
+        if(latitude == 0 && longitude == 0){
             Toast.makeText(getActivity(), "Ваше местоположение ещё не опрелено, подождите немного",
                     Toast.LENGTH_LONG).show();
         }
         else{
-            String[] categorys = {"красота", "магазин", "фитнес", "авто", "кафе", "ресторан", "аптека"};
-            for (int i = 0; i < categorys.length; i++) {
-                repository.search(latityde, longtyde, categorys[i]);
-            }
+            repository.search(latitude, longitude);
 
         }
 

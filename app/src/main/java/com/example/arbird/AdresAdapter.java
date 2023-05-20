@@ -60,16 +60,16 @@ public class AdresAdapter extends RecyclerView.Adapter<AdresAdapter.ViewHolder> 
         }
 
         public void bind(AdresData data) {
-            itemBinding.adress.setText(data.getAddres());
+            itemBinding.address.setText(data.getAddres());
             itemBinding.city.setText(data.getCity());
             itemBinding.country.setText(data.getCountry());
-            itemBinding.postInd.setText(data.getPostalCode());
+            itemBinding.index.setText(data.getPostalCode());
             String knownName = data.getKnownName();
             if(knownName.isEmpty()) {
-                itemBinding.namekn.setVisibility(View.GONE);
+                itemBinding.name.setVisibility(View.GONE);
             } else {
-                itemBinding.namekn.setVisibility(View.VISIBLE);
-                itemBinding.namekn.setText(knownName);
+                itemBinding.name.setVisibility(View.VISIBLE);
+                itemBinding.name.setText(knownName);
             }
         }
     }
