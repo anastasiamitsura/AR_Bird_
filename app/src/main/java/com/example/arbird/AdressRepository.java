@@ -13,7 +13,6 @@ public class AdressRepository implements AutoCloseable {
         dataBaseHelper = new DataBaseHelper(context);
         adresses.addAll(dataBaseHelper.getAll());
 
-        adresses.add(new AdresData("дом 5", "Караганда", "Люксенбург", "398775", "царство"));
     }
 
     public List<AdresData> getAdresss() {
