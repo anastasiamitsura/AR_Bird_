@@ -52,9 +52,9 @@ public class PlaceAdapter extends RecyclerView.Adapter<PlaceAdapter.ViewHolder> 
         }
 
         public void bind(PlaceShortData data){
-            binding.namebr.setText(data.getName());
-            binding.adress.setText(data.getAdress());
-            binding.itaj.setText(data.getEtaj());
+            binding.namePlace.setText(data.getName());
+            binding.address.setText(data.getAdress());
+            binding.floor.setText(data.getEtaj());
         }
     }
 

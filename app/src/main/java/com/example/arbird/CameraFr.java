@@ -94,19 +94,6 @@ public class CameraFr extends Fragment implements SensorEventListener{
             }
         });
 
-        binding.getadress.setOnClickListener(view -> {
-            if(locationNow != null){
-                try {
-                    getAdress();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            else{
-                Toast.makeText(getActivity(), "Ваше местоположение ещё не опрелено, подождите немного",
-                        Toast.LENGTH_LONG).show();
-            }
-        });
         sensorManager = (SensorManager) getContext().getSystemService(Context.SENSOR_SERVICE);
         sensorManager.registerListener(this, sensorManager
                         .getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD),
@@ -154,7 +141,13 @@ public class CameraFr extends Fragment implements SensorEventListener{
                     Toast.LENGTH_LONG).show();
         }
         else{
+            try {
+                getAdress();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             repository.search(latitude, longitude);
+
 
         }
 

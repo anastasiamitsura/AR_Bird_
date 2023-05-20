@@ -60,7 +60,7 @@ public class AdresAdapter extends RecyclerView.Adapter<AdresAdapter.ViewHolder> 
         }
 
         public void bind(AdresData data) {
-            itemBinding.address.setText(data.getAddres());
+            itemBinding.addres.setText(data.getAddres());
             itemBinding.city.setText(data.getCity());
             itemBinding.country.setText(data.getCountry());
             itemBinding.index.setText(data.getPostalCode());

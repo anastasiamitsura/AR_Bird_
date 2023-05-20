@@ -29,7 +29,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/address"
+            android:id="@+id/addres"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -50,9 +50,9 @@
             app:flow_maxElementsWrap="2"
             app:flow_wrapMode="chain"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@id/address"
-            app:layout_constraintStart_toStartOf="@id/address"
-            app:layout_constraintTop_toBottomOf="@id/address" />
+            app:layout_constraintEnd_toEndOf="@id/addres"
+            app:layout_constraintStart_toStartOf="@id/addres"
+            app:layout_constraintTop_toBottomOf="@id/addres" />
 
         <TextView
             android:id="@+id/city"

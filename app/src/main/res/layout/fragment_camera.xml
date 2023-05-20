@@ -33,15 +33,6 @@
             android:layout_weight="1"
             android:text="Сканировать" />
 
-        <Button
-            android:id="@+id/getadress"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="2dp"
-            android:layout_marginVertical="4dp"
-            android:layout_weight="1"
-            android:text="Получить адрес" />
-
     </LinearLayout>
 
 
