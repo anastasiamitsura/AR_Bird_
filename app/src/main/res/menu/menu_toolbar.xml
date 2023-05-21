@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/camerabt"
-        android:icon="@drawable/camera_24"
-        android:title="Camera" />
+        android:id="@+id/scanbt"
+        android:icon="@drawable/landscape_24"
+        android:title="Scan" />
 
     <item
         android:id="@+id/historybt"

@@ -12,8 +12,21 @@
         tools:context=".ProfileFragment"
         android:orientation="vertical">
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                android:text="История сканирований"/>
+        </androidx.appcompat.widget.Toolbar>
+
         <androidx.cardview.widget.CardView
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="20dp"
             android:layout_width="150dp"
             android:layout_height="150dp"
             app:cardCornerRadius="75dp"

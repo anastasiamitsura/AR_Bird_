@@ -1,7 +1,6 @@
 package com.example.arbird;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -43,60 +42,60 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class ScanFragment extends Fragment implements SensorEventListener{
+public class ScanFragment extends Fragment implements SensorEventListener {
 
+    private FragmentScanBinding binding;
 
     public static int countScan = 0;
-    private AdressRepository repository1;
-    private final AdresAdapter adapter1 = new AdresAdapter();
-    private FragmentScanBinding binding;
-    private final PlaceAdapter adapter = new PlaceAdapter();
-    private final PlaceRepository repository = new PlaceRepository();
-
     SharedPreferences sPref;
     final String SAVED_SCAN_COUNT = "saved_scan_count";
+
+    private AdressRepository repositoryAddress;
+    private final AdresAdapter adapterAddress = new AdresAdapter();
+
+    private final PlaceAdapter adapter = new PlaceAdapter();
+    private final PlaceRepository repository = new PlaceRepository();
 
     Geocoder geocoder;
     List<Address> addresses;
     private SensorManager sensorManager;
     Location mMyLocation = new Location("MyLocation");
-    Location mKabaLocation = new Location("Kaba");
-    private final float kabaSharifLongitude = 39.8261f;
-    private final float kebaSharifLatitude = 21.4225f;
     private LocationManager locationManager;
     Location locationNow;
-    double latityde;
-    double longtyde;
+    double latitude;
+    double longitude;
     float degreeNow;
-    private float RotateDegree = 0f;
-
 
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
-    {
-        locationManager = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         geocoder = new Geocoder(requireContext(), Locale.getDefault());
         binding = FragmentScanBinding.inflate(inflater, container, false);
-        repository1 = new AdressRepository(requireContext());
+        repositoryAddress = new AdressRepository(requireContext());
         int permissionStatus = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION);
 
         if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
 
-        } else {
+        }
+        else {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         }
         binding.skan.setOnClickListener(view -> {
-            checkNapraw(locationNow);
-            goSearch(latityde, longtyde);
-            countScan++;
-            binding.locaT.setText(formatLocation(locationNow));
+            if (locationNow != null) {
+                checkNapraw(locationNow);
+                goSearch(latitude, longitude);
+                countScan++;
+            } else {
+                Toast.makeText(getActivity(), "Ваше местоположение ещё не опрелено, подождите немного",
+                        Toast.LENGTH_LONG).show();
+            }
         });
         binding.recycler.setAdapter(adapter);
         repository.setOnLoadingPlaceState(state -> {
-            if(state instanceof OnLoadingPlaceState.State.Success){
-                onUpdateData((OnLoadingPlaceState.State.Success)state);
+            if (state instanceof OnLoadingPlaceState.State.Success) {
+                onUpdateData((OnLoadingPlaceState.State.Success) state);
             }
         });
 
@@ -112,6 +111,7 @@ public class ScanFragment extends Fragment implements SensorEventListener{
         return binding.getRoot();
 
     }
+
     private ActivityResultLauncher<String> requestPermissionLauncher = registerForActivityResult(
             new ActivityResultContracts.RequestPermission(),
             new ActivityResultCallback<Boolean>() {
@@ -127,43 +127,32 @@ public class ScanFragment extends Fragment implements SensorEventListener{
             }
     );
 
-    private String formatLocation(Location location) {
-        if (location == null)
-            return "";
-        return String.format(
-                "Coordinates: lat = %1$.4f, lon = %2$.4f, time = %3$tF %3$tT",
-                location.getLatitude(), location.getLongitude(), new Date(
-                        location.getTime()));
-    }
 
 
     private void onUpdateData(OnLoadingPlaceState.State.Success state) {
         adapter.setItems(state.getPlaces());
     }
 
-    //TODO: вроде так должно работать, но это не точно
     private void goSearch(double latitude, double longitude) {
-        if(latitude == 0 && longitude == 0){
+        if (latitude == 0 && longitude == 0) {
             Toast.makeText(getActivity(), "Ваше местоположение ещё не опрелено, подождите немного",
                     Toast.LENGTH_LONG).show();
-        }
-        else{
+        } else {
+            repository.search(latitude, longitude);
             try {
                 getAdress();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            repository.search(latitude, longitude);
-
 
         }
 
     }
 
 
+    float[] mGravity;
+    float[] mGeomagnetic;
 
-    float [] mGravity;
-    float [] mGeomagnetic;
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
@@ -178,29 +167,28 @@ public class ScanFragment extends Fragment implements SensorEventListener{
                 float orientation[] = new float[3];
                 SensorManager.getOrientation(R, orientation);
                 float degree = (float) Math.toDegrees(orientation[0]);
-                float actualAngle = getBearing(degree);
-                // rotate your compass image by actualAngle
-                degreeNow =  degree;
-
-                RotateDegree = -degree;
+                degreeNow = degree;
             }
         }
     }
+
     GeomagneticField mGeoMag = null;
+
     public float getBearing(float heading) {
         if (mGeoMag == null) return heading;
         heading -= mGeoMag.getDeclination();
-        return mMyLocation.bearingTo(mKabaLocation) - heading;
+        return mMyLocation.bearingTo(locationNow) - heading;
     }
 
     @Override
     public void onAccuracyChanged(Sensor sensor, int i) {
 
     }
+
     @Override
     public void onResume() {
         super.onResume();
-        mGeoMag = new GeomagneticField(kebaSharifLatitude, kabaSharifLongitude, 0, System.currentTimeMillis());
+        mGeoMag = new GeomagneticField((float) latitude, (float) longitude, 0, System.currentTimeMillis());
         if (ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             //я не знаю зачем это надо, но видимо для какого то разрешения это жизнено необходимо
             return;
@@ -210,45 +198,43 @@ public class ScanFragment extends Fragment implements SensorEventListener{
         checkEnabled();
     }
 
-    //остановка считывания геопозиции
     @Override
     public void onPause() {
         super.onPause();
         locationManager.removeUpdates(locationListener);
     }
 
-    //я так понимаю это обработка всего связаного с изменение или считывание позиции
+
     private LocationListener locationListener = new LocationListener() {
 
-        //если локация изменилась и тп
         @Override
         public void onLocationChanged(Location location) {
             locationNow = location;
         }
 
-        //проверка доступа к провайдеру
         @Override
         public void onProviderDisabled(String provider) {
             checkEnabled();
         }
 
-        //забить на наличие разрешений
-        @SuppressLint("MissingPermission")
         @Override
         public void onProviderEnabled(String provider) {
             checkEnabled();
-            locationNow =  locationManager.getLastKnownLocation(provider);
+            if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
+                return;
+            }
+            locationNow = locationManager.getLastKnownLocation(provider);
 
         }
 
-        //проврека работоспоcобности провайдера
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
             if (provider.equals(LocationManager.GPS_PROVIDER)) {
-                //binding.tvStatusGPS.setText("Status: " + String.valueOf(status));
             }
         }
     };
+
 
 
     //вывод проверки рабоспособности провайдера
@@ -256,43 +242,42 @@ public class ScanFragment extends Fragment implements SensorEventListener{
     }
 
     private  void checkNapraw(Location location){
-        latityde = location.getLatitude();
-        longtyde = location.getLongitude();
-        Log.e(latityde + "", longtyde + "");
+        latitude = location.getLatitude();
+        longitude = location.getLongitude();
+        Log.e(latitude + "", longitude + "");
         if (degreeNow >= -22.5 && degreeNow <= 22.5){
-            latityde += 0.0004;
+            latitude += 0.0004;
         }
         else if (degreeNow >= 22.5 && degreeNow <= 67.5){
-            latityde += 0.0004;
-            longtyde += 0.0004;
+            latitude += 0.0004;
+            longitude += 0.0004;
         }
         else if (degreeNow >= 67.5 && degreeNow <= 112.5){
-            longtyde += 0.0004;
+            longitude += 0.0004;
         }
         else if (degreeNow >= 112.5 && degreeNow <= 157.5){
-            latityde -= 0.0004;
-            longtyde += 0.0004;
+            latitude -= 0.0004;
+            longitude += 0.0004;
         }
         else if (degreeNow >= 157.5 && degreeNow <= -157.5){
-            latityde -= 0.0004;
+            latitude -= 0.0004;
         }
         else if (degreeNow >= -157.5 && degreeNow <= -112.5){
-            latityde -= 0.0004;
-            longtyde -= 0.0004;
+            latitude -= 0.0004;
+            longitude -= 0.0004;
         }
         else if (degreeNow >= -112.5 && degreeNow <= -67.5){
-            longtyde -= 0.0004;
+            longitude -= 0.0004;
         }
         else{
-            latityde += 0.0004;
-            longtyde -= 0.0004;
+            latitude += 0.0004;
+            longitude -= 0.0004;
         }
-        Log.e(latityde + "", longtyde + "");
+        Log.e(latitude + "", longitude + "");
     }
 
     private void getAdress() throws IOException {
-        checkNapraw(locationNow);
-        addresses = geocoder.getFromLocation(latityde, longtyde, 1);
+        addresses = geocoder.getFromLocation(latitude, longitude, 1);
         String address = addresses.get(0).getAddressLine(0); // If any additional address line present than only, check with max available address lines by getMaxAddressLineIndex()
         int iend = address.indexOf(",");
         String subString = "";
@@ -301,12 +286,11 @@ public class ScanFragment extends Fragment implements SensorEventListener{
             subString = address.substring(0 , iend);
         }
         String city = addresses.get(0).getLocality();
-        String state = addresses.get(0).getAdminArea();
         String country = addresses.get(0).getCountryName();
         String postalCode = addresses.get(0).getPostalCode();
         String knownName = addresses.get(0).getFeatureName();
-        binding.AdresT.setText(address);
-        repository1.addAdress(
+        binding.Addrestxt.setText("Адрес: " + address);
+        repositoryAddress.addAdress(
                 new AdresData(
                         subString,
                         "Город:" + city,
@@ -315,7 +299,7 @@ public class ScanFragment extends Fragment implements SensorEventListener{
                         "Название: " + knownName
                 )
         );
-        adapter1.setData(repository1.getAdresss());
+        adapterAddress.setData(repositoryAddress.getAdresss());
     }
 
     private void saveCount() {

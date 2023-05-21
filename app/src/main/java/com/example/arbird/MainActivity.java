@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
             Fragment selectedFragment=null;
             switch (item.getItemId()){
-                case R.id.camerabt:
+                case R.id.scanbt:
                     selectedFragment = new ScanFragment();
                     break;
                 case R.id.historybt:

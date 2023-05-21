@@ -1,6 +1,7 @@
 package com.example.arbird;
 
 import android.util.Log;
+import android.widget.Toast;
 
 
 import com.example.arbird.PlacesFiles.PlaceApi;
@@ -78,10 +79,11 @@ public class PlaceRepository {
                 }
             }
             onLoadingPlaceState.changeState(
-                    new OnLoadingPlaceState.State.Success(
-                            list
-                    )
+                        new OnLoadingPlaceState.State.Success(
+                                list
+                        )
             );
+
         }
     }
 
