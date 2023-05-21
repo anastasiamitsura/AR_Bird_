@@ -82,6 +82,7 @@ public class ScanFragment extends Fragment implements SensorEventListener {
         else {
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         }
+
         binding.skan.setOnClickListener(view -> {
             if (locationNow != null) {
                 checkNapraw(locationNow);
