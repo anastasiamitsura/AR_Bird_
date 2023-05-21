@@ -88,9 +88,16 @@ public class ScanFragment extends Fragment implements SensorEventListener{
             requestPermissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION);
         }
         binding.skan.setOnClickListener(view -> {
-            checkNapraw(locationNow);
-            goSearch(latityde, longtyde);
-            countScan++;
+            if(locationNow != null){
+                checkNapraw(locationNow);
+                goSearch(latityde, longtyde);
+                countScan++;
+            }
+            else {
+                Toast.makeText(getActivity(), "Ваше местоположение ещё не опрелено, подождите немного",
+                        Toast.LENGTH_LONG).show();
+            }
+
         });
         binding.recycler.setAdapter(adapter);
         repository.setOnLoadingPlaceState(state -> {
