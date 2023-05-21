@@ -1,4 +1,4 @@
-package com.example.arbird;
+package com.example.arbird.PlacesFiles;
 
 import com.google.gson.annotations.SerializedName;
 

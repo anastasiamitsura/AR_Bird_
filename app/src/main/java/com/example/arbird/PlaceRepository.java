@@ -3,6 +3,10 @@ package com.example.arbird;
 import android.util.Log;
 
 
+import com.example.arbird.PlacesFiles.PlaceApi;
+import com.example.arbird.PlacesFiles.PlaceShortData;
+import com.example.arbird.PlacesFiles.ResponseDoubleGis;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

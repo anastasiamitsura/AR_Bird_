@@ -1,4 +1,4 @@
-package com.example.arbird;
+package com.example.arbird.AddressDataBase;
 
 import android.content.ContentValues;
 import android.content.Context;

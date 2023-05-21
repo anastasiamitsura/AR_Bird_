@@ -1,6 +1,5 @@
 package com.example.arbird;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -8,6 +7,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.example.arbird.AddressDataBase.AdressRepository;
 import com.example.arbird.databinding.ActivityMainBinding;
 import com.google.android.material.navigation.NavigationBarView;
 
@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         binding.navV.setOnItemSelectedListener(itemSelectListener);
-        getSupportFragmentManager().beginTransaction().replace(R.id.containerrrr, new CameraFr()).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.containerrrr, new ScanFragment()).commit();
         int a = 0;
     }
 
@@ -39,13 +39,13 @@ public class MainActivity extends AppCompatActivity {
             Fragment selectedFragment=null;
             switch (item.getItemId()){
                 case R.id.camerabt:
-                    selectedFragment = new CameraFr();
+                    selectedFragment = new ScanFragment();
                     break;
                 case R.id.historybt:
-                    selectedFragment = new KompasFragment();
+                    selectedFragment = new HistoryFragment();
                     break;
                 case R.id.profilebt:
-                    selectedFragment = new GPSFragment();
+                    selectedFragment = new ProfileFragment();
                     break;
             }
             getSupportFragmentManager().beginTransaction().replace(R.id.containerrrr, selectedFragment).commit();

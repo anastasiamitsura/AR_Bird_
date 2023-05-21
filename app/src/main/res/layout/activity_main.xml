@@ -16,7 +16,7 @@
         android:layout_height="match_parent"
         android:layout_weight="1"
         app:layout_constraintBottom_toTopOf="@id/navV"
-        app:navGraph="@navigation/navigation_app"/>
+        app:navGraph="@navigation/navigation"/>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/navV"

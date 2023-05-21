@@ -1,5 +1,7 @@
 package com.example.arbird;
 
+import com.example.arbird.PlacesFiles.PlaceShortData;
+
 import java.util.List;
 
 public interface OnLoadingPlaceState {

@@ -1,7 +1,5 @@
-package com.example.arbird;
+package com.example.arbird.PlacesFiles;
 
-
-import androidx.core.location.LocationRequestCompat;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

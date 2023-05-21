@@ -3,7 +3,7 @@ package com.example.arbird;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.hardware.GeomagneticField;
 import android.hardware.Sensor;
@@ -30,11 +30,12 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.ItemTouchHelper;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.arbird.databinding.FragmentCameraBinding;
-import com.example.arbird.databinding.FragmentKompasBinding;
+import com.example.arbird.AddressDataBase.AdresAdapter;
+import com.example.arbird.AddressDataBase.AdresData;
+import com.example.arbird.AddressDataBase.AdressRepository;
+import com.example.arbird.PlacesFiles.PlaceAdapter;
+import com.example.arbird.databinding.FragmentScanBinding;
 
 import java.io.IOException;
 import java.util.Date;
@@ -42,16 +43,18 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class CameraFr extends Fragment implements SensorEventListener{
+public class ScanFragment extends Fragment implements SensorEventListener{
 
 
+    public static int countScan = 0;
     private AdressRepository repository1;
     private final AdresAdapter adapter1 = new AdresAdapter();
-    private FragmentCameraBinding binding;
+    private FragmentScanBinding binding;
     private final PlaceAdapter adapter = new PlaceAdapter();
     private final PlaceRepository repository = new PlaceRepository();
 
-
+    SharedPreferences sPref;
+    final String SAVED_SCAN_COUNT = "saved_scan_count";
 
     Geocoder geocoder;
     List<Address> addresses;
@@ -67,13 +70,15 @@ public class CameraFr extends Fragment implements SensorEventListener{
     float degreeNow;
     private float RotateDegree = 0f;
 
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState)
     {
         locationManager = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
         geocoder = new Geocoder(requireContext(), Locale.getDefault());
-        binding = FragmentCameraBinding.inflate(inflater, container, false);
+        binding = FragmentScanBinding.inflate(inflater, container, false);
         repository1 = new AdressRepository(requireContext());
         int permissionStatus = ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION);
 
@@ -85,6 +90,7 @@ public class CameraFr extends Fragment implements SensorEventListener{
         binding.skan.setOnClickListener(view -> {
             checkNapraw(locationNow);
             goSearch(latityde, longtyde);
+            countScan++;
             binding.locaT.setText(formatLocation(locationNow));
         });
         binding.recycler.setAdapter(adapter);
@@ -102,6 +108,7 @@ public class CameraFr extends Fragment implements SensorEventListener{
         sensorManager.registerListener(this, sensorManager
                         .getDefaultSensor(Sensor.TYPE_ACCELEROMETER),
                 SensorManager.SENSOR_DELAY_UI);
+        loadCount();
         return binding.getRoot();
 
     }
@@ -153,11 +160,7 @@ public class CameraFr extends Fragment implements SensorEventListener{
 
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        repository.removeOnLoadingPlaceState();
-    }
+
 
     float [] mGravity;
     float [] mGeomagnetic;
@@ -247,15 +250,6 @@ public class CameraFr extends Fragment implements SensorEventListener{
         }
     };
 
-    //вывод местоположения
-    private void showLocation(Location location) {
-        if (location == null)
-            return;
-        if (location.getProvider().equals(LocationManager.GPS_PROVIDER)) {
-       //     binding.tvLocationGPS.setText(formatLocation(location));
-        }
-    }
-
 
     //вывод проверки рабоспособности провайдера
     private void checkEnabled() {
@@ -322,6 +316,26 @@ public class CameraFr extends Fragment implements SensorEventListener{
                 )
         );
         adapter1.setData(repository1.getAdresss());
+    }
+
+    private void saveCount() {
+        sPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        SharedPreferences.Editor ed = sPref.edit();
+        ed.putInt(SAVED_SCAN_COUNT, countScan);
+        ed.commit();
+    }
+
+    private void loadCount() {
+        sPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        int scanCount = sPref.getInt(SAVED_SCAN_COUNT, 0);
+        countScan = scanCount;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        repository.removeOnLoadingPlaceState();
+        saveCount();
     }
 
 }
